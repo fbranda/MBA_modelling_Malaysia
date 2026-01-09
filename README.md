@@ -1,1 +1,1 @@
-# MBA_modeling_Malaysia
+# MBA_modelling_Malaysia
