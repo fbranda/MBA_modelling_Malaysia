@@ -53,11 +53,12 @@ The object can be loaded in R using:
 
 ```r
 readRDS("scripts/mesh_sabah.rds")
+```
 
 ---
 
 
-## Data sources
+## Data sources <a name="Datasources"></a>
 
 **Serological data**: Generated and processed as described in the associated manuscript.
 
@@ -88,7 +89,8 @@ This ensures fully reproducible results using the provided dataset and functions
 
 ---
 
-## Requirements
+## Requirements <a name="Requirements"></a>
+
 The analysis was developed and tested in R.
 Required R packages are loaded within the scripts; users may need to install missing dependencies prior to execution.
 Recommended R version: ≥ 4.2.0.
