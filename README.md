@@ -56,7 +56,8 @@ readRDS("scripts/mesh_sabah.rds")
 
 ---
 
-### Data sources
+
+## Data sources
 
 **Serological data**: Generated and processed as described in the associated manuscript.
 
@@ -68,7 +69,7 @@ All data included are intended for research and educational use.
 
 ---
 
-### Reproducibility
+## Reproducibility <a name="Reproducibility"></a>
 
 To reproduce the analysis:
 
@@ -87,7 +88,7 @@ This ensures fully reproducible results using the provided dataset and functions
 
 ---
 
-### Requirements
+## Requirements
 The analysis was developed and tested in R.
 Required R packages are loaded within the scripts; users may need to install missing dependencies prior to execution.
 Recommended R version: ≥ 4.2.0.
