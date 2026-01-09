@@ -41,8 +41,7 @@ R implementation of the **Dirichlet Process Mixture Model (DPMM)** using a Chine
 This script must be sourced before running the main modelling script.
 
 Reference:  
-Li, Y., Schofield, E., & Gönen, M. (2019). *A tutorial on Dirichlet process mixture modeling*.  
-Journal of Mathematical Psychology, 91, 128–144.
+Li Y, Schofield E, Gönen M. A tutorial on Dirichlet process mixture modeling. Journal of mathematical psychology. 2019 Aug 1;91:128-44.
 
 ---
 
