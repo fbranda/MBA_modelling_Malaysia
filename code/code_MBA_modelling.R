@@ -128,8 +128,13 @@ data_MBA_modelling<-cbind(data_MBA_sim, dismfi_slog)
 ### DPMM models with different combinations of alpha and sigma_y  ----
 set.seed(42)
 
-alpha_vals <- c(0.01, 1.00, 2.00, 3.00)
-sigma_y_vals <- c(0.50, 1.00, 1.5, 3.00)
+#combinations used in the paper:
+#alpha_vals <- c(0.01, 1.00, 2.00, 3.00)
+#sigma_y_vals <- c(0.50, 1.00, 1.5, 3.00)
+
+#combinations to test the simulated data:
+alpha_vals <- c(0.01, 1.00)
+sigma_y_vals <- c(0.50, 1.00)
 
 c_init <- rep(1, nrow(dismfi_slog))
 mu0 <- matrix(rep(0, 6), ncol = 6, byrow = TRUE)
@@ -178,12 +183,14 @@ for (i in seq_along(alpha_vals)) {
 }
 
 #### sensitivity analysis ----
-var_names <- ls(pattern = "^results_alpha_[0-9.]+_sigma_[0-9.]+$")
+rds_files <- list.files(pattern = "^results_alpha_[0-9.]+_sigma_[0-9.]+\\.rds$")
 
-# Create a named list from the variables
-results_list <- setNames(lapply(var_names, get), var_names)
+results_list <- setNames(
+  lapply(rds_files, readRDS),
+  tools::file_path_sans_ext(rds_files)
+)
 
-save(results_list,file = "alphasigma_listM.RData")
+save(results_list, file = "alphasigma_listM.RData")
 
 ###### load the saved sensitivity analysis results ----
 load("alphasigma_listM.RData")
@@ -277,7 +284,8 @@ print(df_summary_ord)
 malaysia_dpmm<-data_MBA_modelling
 
 #the following line depend on the best combination given by the sensitivity analysis.
-malaysia_dpmm$cluster<-processed_results[["results_alpha_3_sigma_1.5"]]
+#in the example of the simulated data this combination is alpha=0.01 and sigma=1
+malaysia_dpmm$cluster<-processed_results[["results_alpha_0.01_sigma_1"]]
 
 malaysia_dpmm<-malaysia_dpmm|> mutate(
   occupation_grouped=as.factor(occupation),
@@ -362,7 +370,7 @@ summary_df <- malaysia_dpmm %>%
   )
 
 # Friendly labels for facets
-var_labels <- c(age = "Age", dem = "Pop. density")
+var_labels <- c(age = "Age", dem = "Pop.density")
 
 # Plot
 p5_ci <- ggplot(summary_df, aes(x = factor(cluster), y = mean, fill = factor(cluster))) +
@@ -547,15 +555,15 @@ ggplot() +
   )
 
 # Filter NTD_sf to only include points from cluster 2
-NTD_cluster2 <- NTD_sf %>%
-  filter(cluster == 2)
+#NTD_cluster2 <- NTD_sf %>%
+#  filter(cluster == 2)
 
 # Plot only cluster 2 points over the Sabah map
-ggplot() +
-  geom_sf(data = sabah, fill = "white", color = "black") + # Plot background map
-  geom_sf(data = NTD_cluster2, color = "#D95F02", size = 2) + # Points for cluster 3
-  theme_minimal() +
-  labs(title = "Cluster 2 Locations over Sabah Regions", x = "Longitude", y = "Latitude")
+#ggplot() +
+#  geom_sf(data = sabah, fill = "white", color = "black") + 
+#  geom_sf(data = NTD_cluster2, color = "#D95F02", size = 2) + 
+#  theme_minimal() +
+#  labs(title = "Cluster 2 Locations over Sabah Regions", x = "Longitude", y = "Latitude")
 
 
 #### Spatial distribution ----
@@ -611,11 +619,11 @@ grid_sp@data$coordinates <- coordinates(grid_sp)
 #### plot the predicted probabilities of belonging to a cluster
 
 # Lists to store results
-models_list <- vector("list", 4)
-predictions_list <- vector("list", 4)
+models_list <- vector("list", 2)
+predictions_list <- vector("list", 2)
 
-# Loop over 1 to 4
-models_and_preds <- map(1:4, function(i) {
+# Loop over 1 to the number of clusters
+models_and_preds <- map(1:2, function(i) {
   # Dynamic variable names
   cluster_col <- glue("cluster{i}")
   cluster_var <- malaysiadpmm_dummies[, c("x", "y", cluster_col)]
@@ -663,7 +671,7 @@ colnames(grid_coords) <- c("X", "Y")
 # Combine predictions into one dataframe
 all_preds_df <- map2_dfr(
   .x = predictions_list,
-  .y = 1:4,
+  .y = 1:2,
   .f = function(pred, i) {
     tibble(
       X = grid_coords$X,
@@ -687,7 +695,7 @@ ggplot(all_preds_df, aes(X, Y, fill = pred)) +
   facet_wrap(~ cluster, ncol = 3, nrow = 2)
 
 # Generate individual plots per cluster
-plots <- map(1:4, function(i) {
+plots <- map(1:2, function(i) {
   cluster_df <- all_preds_df %>% filter(cluster == paste0("Cluster ", i))
   
   ggplot(cluster_df, aes(X, Y, fill = pred)) +
@@ -701,8 +709,8 @@ plots <- map(1:4, function(i) {
 
 p1<- plots[[1]]
 p2<- plots[[2]]
-p3<- plots[[3]]
-p4<- plots[[4]]
-gridExtra::grid.arrange(p1, p3, p4, nrow=1)
-p2
+#p3<- plots[[3]]
+#p4<- plots[[4]]
+gridExtra::grid.arrange(p1, p2,nrow=1)
+
 
